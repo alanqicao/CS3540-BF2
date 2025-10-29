@@ -99,14 +99,17 @@ public class BakeOff2 extends PApplet {
 			noFill();
 			strokeWeight(3f);
 			
-			if (trialIndex == i){
-		        stroke(255, 0, 0, 192); // set color to semi translucent
-		      }else{
-		        stroke(128, 128, 128, 128); // set color to semi translucent
-		      }
+			if (trialIndex == i) stroke(255, 0, 0, 192);
+			  else                 stroke(128, 128, 128, 128);
+
+			  // ONLY the active target gets long guides
+			  if (i == trialIndex) {
+				  drawCrossGuidesOnly(d.z, inchToPix(1.5f));
+			  }
 		      if(trialIndex==i && checkForSuccess()){
-		        stroke(0,255,0,192);
-		      }
+			        stroke(0,255,0,192);
+			      }
+
 			rect(0, 0, d.z, d.z);
 			popMatrix();
 		}
@@ -115,9 +118,20 @@ public class BakeOff2 extends PApplet {
 		pushMatrix();
 		translate(logoX, logoY); // translate draw center to the center oft he logo square
 		rotate(radians(logoRotation)); // rotate using the logo square as the origin
+		
+		// guides for the movable logo (uses current stroke)
+		pushStyle();
+		stroke(60, 60, 192, 192); 
+		drawCrossGuidesOnly(logoZ, inchToPix(1.5f));
+		popStyle();
+		
+		pushStyle();
+
 		noStroke();
+		
 		fill(60, 60, 192, 192);
 		rect(0, 0, logoZ, logoZ);
+		popStyle();
 		popMatrix();
 
 		// ===========DRAW EXAMPLE CONTROLS=================
@@ -222,4 +236,19 @@ public class BakeOff2 extends PApplet {
 	float inchToPix(float inch) {
 		return inch * screenPPI;
 	}
+	
+	// Long crosshair + diagonal corner rays, no stroke/fill changes.
+	// Draw only a cross (horizontal + vertical) extending OUTSIDE the square.
+	// Uses current stroke settings; does not change stroke/fill/weight.
+	void drawCrossGuidesOnly(float size, float extLenPx) {
+	  float h = size * 0.5f;
+	  // horizontal
+	  line(-(h + extLenPx), 0, -h, 0);
+	  line( h, 0,  h + extLenPx, 0);
+	  // vertical
+	  line(0, -(h + extLenPx), 0, -h);
+	  line(0,  h,  0,  h + extLenPx);
+	}
+
+
 }
